@@ -83,6 +83,7 @@ jobs:
     name: Collect all artifacts
     runs-on: ubuntu-latest
     needs: build-kernelsu-ko
+    if: always()
 
     steps:
     - name: Download all artifacts
