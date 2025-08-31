@@ -13,9 +13,6 @@ jobs:
   build-kernelsu-ko:
     name: Build kernelsu.ko for ${{ matrix.kmi }}
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}-20250825
-      options: --privileged
 
     strategy:
       fail-fast: false
@@ -27,7 +24,7 @@ jobs:
           - android14-5.15
           - android14-6.1
           - android15-6.6
-          - android16-6.12
+          # - android16-6.12
 
     steps:
     - name: Checkout source code
@@ -59,7 +56,7 @@ jobs:
 
         echo "=== Building kernelsu.ko for KMI: ${{ matrix.kmi }} ==="
 
-        KSU_GIT_VERSION=$(git rev-list --count HEAD) make
+        docker run --rm -v $(pwd):/build ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 KSU_GIT_VERSION=$(git rev-list --count HEAD) make
         
         echo "=== Build completed ==="
 
