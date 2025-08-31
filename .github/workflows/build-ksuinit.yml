@@ -16,6 +16,8 @@ jobs:
   build-kernelsu-ko:
     name: Build kernelsu.ko for ${{ matrix.kmi }}
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}-20250825
 
     strategy:
       fail-fast: false
@@ -41,12 +43,6 @@ jobs:
         git clone https://github.com/tiann/KernelSU kernelsu
         cd kernelsu
         
-        # Checkout specified tag/commit if provided
-        if [ "${{ github.event.inputs.kernelsu_tag }}" != "" ] && [ "${{ github.event.inputs.kernelsu_tag }}" != "main" ]; then
-          echo "Checking out KernelSU tag/commit: ${{ github.event.inputs.kernelsu_tag }}"
-          git checkout ${{ github.event.inputs.kernelsu_tag }}
-        fi
-        
         echo "=== KernelSU Repository Info ==="
         git log --oneline -5
         echo "Current commit: $(git rev-parse HEAD)"
@@ -59,7 +55,7 @@ jobs:
 
         echo "=== Building kernelsu.ko for KMI: ${{ matrix.kmi }} ==="
 
-        docker run --rm -v $(pwd):/build ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}-20250825 KSU_GIT_VERSION=$(git rev-list --count HEAD) make
+        KSU_GIT_VERSION=$(git rev-list --count HEAD) make
         
         echo "=== Build completed ==="
 
@@ -81,14 +77,28 @@ jobs:
       with:
         name: kernelsu-${{ matrix.kmi }}.ko
         path: /github/workspace/out/kernelsu-${{ matrix.kmi }}.ko
-  
+
   build-ksuinit:
     name: Build ksuinit
     runs-on: ubuntu-latest
+    needs: build-kernelsu-ko
 
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: assets
+    
+    - name: List built modules
+      run: |
+        echo "=== Built KernelSU Modules ==="
+        ls -al .
+        find assets -name "*.ko" -type f | while read ko_file; do
+          echo "📦 $(basename "$ko_file") ($(du -h "$ko_file" | cut -f1))"
+        done
 
     - name: Install Rust target
       run: |
