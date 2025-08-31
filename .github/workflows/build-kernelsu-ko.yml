@@ -9,15 +9,12 @@ on:
         default: 'main'
         type: string
 
-vars:
-  DDK_RELEASE: 20250825
-
 jobs:
   build-kernelsu-ko:
     name: Build kernelsu.ko for ${{ matrix.kmi }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}-${{ vars.DDK_RELEASE }}
+      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}-20250825
       options: --privileged
 
     strategy:
