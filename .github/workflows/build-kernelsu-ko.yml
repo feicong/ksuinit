@@ -76,7 +76,7 @@ jobs:
         echo "Copied to: /github/workspace/out/$OUTPUT_NAME"
         ls -la "/github/workspace/out/$OUTPUT_NAME"
         echo "Size: $(du -h "/github/workspace/out/$OUTPUT_NAME" | cut -f1)"
-        llvm-strip "/github/workspace/out/$OUTPUT_NAME"
+        llvm-strip -d "/github/workspace/out/$OUTPUT_NAME"
         echo "Size after stripping: $(du -h "/github/workspace/out/$OUTPUT_NAME" | cut -f1)"
 
     - name: Upload kernelsu.ko artifact
