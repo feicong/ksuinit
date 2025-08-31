@@ -37,8 +37,8 @@ jobs:
 
     - name: Clone KernelSU repository
       run: |
-        echo "Cloning KernelSU from https://github.com/Kernel-SU/KernelSU"
-        git clone https://github.com/Kernel-SU/KernelSU kernelsu
+        echo "Cloning KernelSU from https://github.com/tiann/KernelSU"
+        git clone https://github.com/tiann/KernelSU kernelsu
         cd kernelsu
         
         # Checkout specified tag/commit if provided
