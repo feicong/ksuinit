@@ -14,7 +14,7 @@ jobs:
     name: Build kernelsu.ko for ${{ matrix.kmi }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ylarod/ddk:${{ matrix.kmi }}
+      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}
       options: --privileged
 
     strategy:
