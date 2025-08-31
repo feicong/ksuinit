@@ -54,9 +54,7 @@ jobs:
 
         echo "=== Building kernelsu.ko for KMI: ${{ matrix.kmi }} ==="
 
-        docker run --rm -v ./kernelsu/kernel:/build -e KSU_GIT_VERSION=$(git rev-list --count HEAD) ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 pwd
-        docker run --rm -v ./kernelsu/kernel:/build -e KSU_GIT_VERSION=$(git rev-list --count HEAD) ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 ls -al
-        docker run --rm -v ./kernelsu/kernel:/build -e KSU_GIT_VERSION=$(git rev-list --count HEAD) ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 make
+        docker run --rm -v ./kernelsu/kernel:/build -e KSU_GIT_VERSION=$(git rev-list --count HEAD) -w /build ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 make
         
         echo "=== Build completed ==="
 
