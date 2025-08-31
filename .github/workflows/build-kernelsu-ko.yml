@@ -9,12 +9,15 @@ on:
         default: 'main'
         type: string
 
+env:
+  DDK_RELEASE: 20250825
+
 jobs:
   build-kernelsu-ko:
     name: Build kernelsu.ko for ${{ matrix.kmi }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}
+      image: ghcr.io/ylarod/ddk-dev:${{ matrix.kmi }}-${env.DDK_RELEASE}
       options: --privileged
 
     strategy:
@@ -72,6 +75,9 @@ jobs:
         
         echo "Copied to: /github/workspace/out/$OUTPUT_NAME"
         ls -la "/github/workspace/out/$OUTPUT_NAME"
+        echo "Size: $(du -h "/github/workspace/out/$OUTPUT_NAME" | cut -f1)"
+        llvm-strip "/github/workspace/out/$OUTPUT_NAME"
+        echo "Size after stripping: $(du -h "/github/workspace/out/$OUTPUT_NAME" | cut -f1)"
 
     - name: Upload kernelsu.ko artifact
       uses: actions/upload-artifact@v4
