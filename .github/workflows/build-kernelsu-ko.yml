@@ -52,11 +52,9 @@ jobs:
       run: |
         cp ksuinit/.github/scripts/Makefile kernelsu/kernel/Makefile
 
-        cd kernelsu/kernel
-
         echo "=== Building kernelsu.ko for KMI: ${{ matrix.kmi }} ==="
 
-        docker run --rm -v $(pwd):/build -e KSU_GIT_VERSION=$(git rev-list --count HEAD) ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 make
+        docker run --rm -v ./kernelsu/kernel:/build -e KSU_GIT_VERSION=$(git rev-list --count HEAD) ghcr.io/ylarod/ddk:${{ matrix.kmi }}-20250825 make
         
         echo "=== Build completed ==="
 
@@ -65,7 +63,7 @@ jobs:
         
         # Copy with KMI-specific naming
         OUTPUT_NAME="kernelsu-${{ matrix.kmi }}.ko"
-        cp kernelsu.ko "/github/workspace/out/$OUTPUT_NAME"
+        cp ./kernelsu/kernel/kernelsu.ko "/github/workspace/out/$OUTPUT_NAME"
         
         echo "Copied to: /github/workspace/out/$OUTPUT_NAME"
         ls -la "/github/workspace/out/$OUTPUT_NAME"
