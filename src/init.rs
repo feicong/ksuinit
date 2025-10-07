@@ -170,16 +170,35 @@ fn has_kernelsu() -> bool {
     use syscalls::{syscall, Sysno};
     let mut version = 0;
     const CMD_GET_VERSION: i32 = 2;
-    unsafe {
-        let _ = syscall!(
+    let ret = unsafe {
+        syscall!(
             Sysno::prctl,
             0xDEADBEEF,
             CMD_GET_VERSION,
             std::ptr::addr_of_mut!(version)
-        );
+        )
+    };
+
+    match ret {
+        Ok(0) => {
+            log::info!("{}: {}", s!("KernelSU version"), version);
+            version != 0
+        }
+        Ok(ret_val) => {
+            log::warn!(
+                "{}: syscall returned unexpected value: {}",
+                s!("KernelSU check"),
+                ret_val
+            );
+            false
+        }
+        Err(errno) => {
+            log::warn!(
+                "{}: syscall failed, errno={}",
+                s!("KernelSU check"),
+                errno
+            );
+            false
+        }
     }
-
-    log::info!("{}: {}", s!("KernelSU version"), version);
-
-    version != 0
 }
